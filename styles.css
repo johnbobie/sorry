@@ -416,7 +416,8 @@ em{ font-style: normal; }
 }
 .bubble--trail::before{ left: 18px; }
 .bubble--trail::after { left: 21px; }
-.bubble--trail.is-on{ opacity: 1; transform: none; }
+/* the "..." is what he leaves behind, so it waits until he's actually gone */
+.bubble--trail.is-on{ opacity: 1; transform: none; transition-delay: 1.25s; }
 
 /* the apology itself, called in from off-stage */
 .bubble--offscreen{
