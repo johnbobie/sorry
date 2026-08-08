@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>for Ares</title>
+<meta name="description" content="A little story, and a letter.">
+<meta name="theme-color" content="#fbfaf4">
+<link rel="preload" href="assets/paper-tile.png" as="image">
+<link rel="preload" href="assets/john.png" as="image">
+<link rel="preload" href="assets/fonts/patrick-hand-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/gaegu-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+</head>
+<body>
+
+<!-- ─────────────────────────  1. the front page  ───────────────────────── -->
+<header class="hero" id="hero">
+
+  <svg class="doodle doodle--sun" viewBox="0 0 120 120" aria-hidden="true">
+    <g fill="none" stroke-linecap="round" stroke-width="4">
+      <circle cx="60" cy="60" r="26" stroke="#f0c94b" fill="#fdf0b4"/>
+      <path stroke="#f0c94b" d="M60 18V4M60 116v-14M18 60H4M116 60h-14M30 30 20 20M90 30l10-10M30 90l-10 10M90 90l10 10"/>
+    </g>
+  </svg>
+
+  <svg class="doodle doodle--cloud1" viewBox="0 0 160 80" aria-hidden="true">
+    <path d="M32 66c-16 0-26-10-26-22S17 22 31 23C36 9 50 2 63 6c9-9 25-8 33 2 15-3 28 8 28 22 0 3-1 7-2 9 12 1 20 9 20 17 0 6-5 10-12 10Z"
+          fill="#eaf4fd" stroke="#a9cfe9" stroke-width="3.5" stroke-linejoin="round"/>
+  </svg>
+
+  <svg class="doodle doodle--cloud2" viewBox="0 0 160 80" aria-hidden="true">
+    <path d="M32 66c-16 0-26-10-26-22S17 22 31 23C36 9 50 2 63 6c9-9 25-8 33 2 15-3 28 8 28 22 0 3-1 7-2 9 12 1 20 9 20 17 0 6-5 10-12 10Z"
+          fill="#f7f0fb" stroke="#c8b6e4" stroke-width="3.5" stroke-linejoin="round"/>
+  </svg>
+
+  <div class="hero__inner">
+    <p class="hero__kicker">
+      <svg class="mini-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 14.6 9 21 9.7l-4.8 4.3 1.4 6.4L12 17.2 6.4 20.4l1.4-6.4L3 9.7 9.4 9Z" fill="#fdf0b4" stroke="#e8c95f" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      a little story
+      <svg class="mini-star" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 14.6 9 21 9.7l-4.8 4.3 1.4 6.4L12 17.2 6.4 20.4l1.4-6.4L3 9.7 9.4 9Z" fill="#fdf0b4" stroke="#e8c95f" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    </p>
+
+    <h1 class="hero__title">for <em>Ares</em></h1>
+
+    <p class="hero__by">made by John <span class="hero__heart" aria-hidden="true">♥</span></p>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true">
+    <span class="scroll-cue__text">scroll down</span>
+    <svg class="scroll-cue__arrow" viewBox="0 0 40 64">
+      <path d="M20 4c-3 12 2 22-1 34" fill="none" stroke="#7fc7a6" stroke-width="4.5" stroke-linecap="round"/>
+      <path d="M8 40c5 6 9 11 11 17 3-7 7-12 12-19" fill="none" stroke="#7fc7a6" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</header>
+
+
+<!-- ─────────────────────────  2. the story  ───────────────────────── -->
+<section id="story" aria-label="The story">
+
+  <!-- the stage stays pinned while the beats scroll past behind it -->
+  <div class="stage" id="stage" data-beat="0">
+
+    <svg class="doodle doodle--stage-cloud" viewBox="0 0 160 80" aria-hidden="true">
+      <path d="M32 66c-16 0-26-10-26-22S17 22 31 23C36 9 50 2 63 6c9-9 25-8 33 2 15-3 28 8 28 22 0 3-1 7-2 9 12 1 20 9 20 17 0 6-5 10-12 10Z"
+            fill="#eaf4fd" stroke="#a9cfe9" stroke-width="3.5" stroke-linejoin="round"/>
+    </svg>
+    <svg class="doodle doodle--stage-sun" viewBox="0 0 120 120" aria-hidden="true">
+      <g fill="none" stroke-linecap="round" stroke-width="4">
+        <circle cx="60" cy="60" r="24" stroke="#f0c94b" fill="#fdf0b4"/>
+        <path stroke="#f0c94b" d="M60 20V8M60 112v-12M20 60H8M112 60h-12M31 31 23 23M89 31l8-8M31 89l-8 8M89 89l8 8"/>
+      </g>
+    </svg>
+
+    <svg class="doodle doodle--birds" viewBox="0 0 120 50" aria-hidden="true">
+      <g fill="none" stroke="#9db7c9" stroke-width="3.5" stroke-linecap="round">
+        <path d="M6 26c7-9 13-9 19 0 6-9 12-9 19 0"/>
+        <path d="M62 14c5-7 10-7 15 0 5-7 10-7 15 0"/>
+        <path d="M74 40c4-6 8-6 12 0 4-6 8-6 12 0"/>
+      </g>
+    </svg>
+
+    <svg class="doodle doodle--flowers" viewBox="0 0 120 70" aria-hidden="true">
+      <g stroke-width="3.5" stroke-linecap="round" fill="none">
+        <path d="M22 66V40" stroke="#8fd3b0"/>
+        <path d="M22 52c-7-2-10-5-11-9" stroke="#8fd3b0"/>
+        <g stroke="#e0a8c4">
+          <circle cx="22" cy="30" r="6.5" fill="#ffd7e6"/>
+          <circle cx="12" cy="36" r="5.5" fill="#ffd7e6"/>
+          <circle cx="32" cy="36" r="5.5" fill="#ffd7e6"/>
+          <circle cx="22" cy="42" r="5" fill="#fdf0b4"/>
+        </g>
+        <path d="M78 66V46" stroke="#8fd3b0"/>
+        <path d="M78 56c6-2 9-5 10-9" stroke="#8fd3b0"/>
+        <g stroke="#b6a2dd">
+          <circle cx="78" cy="38" r="5.5" fill="#e8dcf8"/>
+          <circle cx="70" cy="43" r="4.5" fill="#e8dcf8"/>
+          <circle cx="86" cy="43" r="4.5" fill="#e8dcf8"/>
+          <circle cx="78" cy="48" r="4" fill="#fdf0b4"/>
+        </g>
+      </g>
+    </svg>
+
+    <!-- narration -->
+    <div class="captions">
+      <p class="cap" data-cap="1">this is <em>John</em></p>
+      <p class="cap" data-cap="2">and this is <em>Ares</em></p>
+      <p class="cap" data-cap="3">John wants to say sorry to Ares.<br><small>for not answering him.</small></p>
+      <p class="cap" data-cap="4">but John got scared.<br><small>and when John gets scared, he disappears.</small></p>
+      <p class="cap" data-cap="5">so Ares was left standing there.<br><small>and from wherever John was hiding, he said&hellip;</small></p>
+      <p class="cap" data-cap="6">&hellip;and then he did the hard part.<br><small>he came back.</small></p>
+      <p class="cap" data-cap="7">he's still a little scared.<br><small>but he's here. and he brought you something.</small></p>
+    </div>
+
+    <!-- pastel blob that slides behind whoever is being introduced -->
+    <div class="spotlight" aria-hidden="true"></div>
+
+    <!-- the two figures, straight out of the drawing -->
+    <div class="actor actor--ares" id="ares">
+      <div class="actor__inner"><img src="assets/ares.png" alt="A stick figure drawing labelled Ares" width="268" height="821" draggable="false"></div>
+    </div>
+
+    <div class="actor actor--john" id="john">
+      <div class="actor__inner"><img src="assets/john.png" alt="A stick figure drawing labelled John" width="296" height="821" draggable="false"></div>
+    </div>
+
+    <!-- John talking -->
+    <div class="bubble bubble--john" data-bubble="3" aria-hidden="true">hey Ares&hellip;</div>
+    <div class="bubble bubble--trail" data-bubble="4" aria-hidden="true">&hellip;</div>
+    <div class="bubble bubble--offscreen" data-bubble="5" aria-hidden="true">
+      i'm really, <em>really</em> sorry.
+      <span>i built this whole website just to say it.</span>
+    </div>
+    <div class="bubble bubble--back" data-bubble="6" aria-hidden="true">i'm here.</div>
+
+    <!-- little hearts for the last beat -->
+    <div class="stage-hearts" aria-hidden="true">
+      <span>♥</span><span>♥</span><span>♥</span>
+    </div>
+
+    <!-- the ground everybody stands on -->
+    <svg class="ground" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M0 30c90-9 150 7 240 3s150-13 245-6 158 12 250 6 145-11 240-5 168 10 225 4"
+            fill="none" stroke="#8fd3b0" stroke-width="6" stroke-linecap="round"/>
+    </svg>
+    <svg class="grass" viewBox="0 0 1200 40" preserveAspectRatio="none" aria-hidden="true">
+      <g fill="none" stroke="#8fd3b0" stroke-width="4" stroke-linecap="round">
+        <path d="M90 34c2-9 0-14-3-19M96 34c3-8 7-12 12-15M300 34c-1-10-4-14-9-18M306 34c4-7 9-10 15-12M760 34c2-9 1-15-2-20M767 34c4-8 8-11 14-14M1050 34c-2-9-5-13-10-17M1057 34c4-7 10-10 16-11"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- invisible scroll markers, one per story beat -->
+  <div class="beats" aria-hidden="true">
+    <div class="beat" data-beat="1"></div>
+    <div class="beat" data-beat="2"></div>
+    <div class="beat" data-beat="3"></div>
+    <div class="beat" data-beat="4"></div>
+    <div class="beat" data-beat="5"></div>
+    <div class="beat" data-beat="6"></div>
+    <div class="beat" data-beat="7"></div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────  3. the letter  ───────────────────────── -->
+<section class="finale" id="finale">
+  <h2 class="finale__title">he wrote it by hand.</h2>
+  <p class="finale__sub">it's yours, whenever you want to read it.</p>
+
+  <button class="envelope" id="envelope" type="button" aria-haspopup="dialog" aria-label="Open the letter from John">
+    <span class="envelope__stage">
+
+      <!-- the letter that slides out when you open it -->
+      <span class="envelope__letter" aria-hidden="true">
+        <span class="envelope__letter-lines"></span>
+      </span>
+
+      <!-- envelope body -->
+      <svg class="envelope__body" viewBox="0 0 320 210" aria-hidden="true">
+        <path d="M12 34c100-5 196-5 296 0 6 55 6 116 0 168-100 5-196 5-296 0-6-52-6-113 0-168Z"
+              fill="#ffd6bf" stroke="#e39f78" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M12 202c48-46 84-70 100-70M308 202c-48-46-84-70-100-70"
+              fill="none" stroke="#e39f78" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M118 152h84" stroke="#e39f78" stroke-width="4.5" stroke-linecap="round" opacity=".55"/>
+      </svg>
+
+      <!-- the flap that swings open -->
+      <span class="envelope__flap">
+        <svg viewBox="0 0 320 116" aria-hidden="true">
+          <path d="M12 34c100-5 196-5 296 0 -60 56-100 80-148 80S72 90 12 34Z"
+                fill="#ffc7a9" stroke="#e39f78" stroke-width="5" stroke-linejoin="round"/>
+        </svg>
+      </span>
+
+      <!-- wax seal -->
+      <span class="envelope__seal">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <circle cx="32" cy="32" r="24" fill="#ffb3c7" stroke="#e0819a" stroke-width="4"/>
+          <path d="M32 44c-9-6-14-11-14-17a7 7 0 0 1 14-3 7 7 0 0 1 14 3c0 6-5 11-14 17Z" fill="#fff0f4" stroke="#e0819a" stroke-width="3" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </span>
+
+    <span class="envelope__label">for Ares</span>
+    <span class="envelope__hint">tap to open</span>
+  </button>
+
+  <p class="finale__end" id="finaleEnd">that's the whole story. thank you for reading it. <span aria-hidden="true">♥</span></p>
+</section>
+
+<footer class="foot"><span aria-hidden="true">✦</span> made with a lot of nerves, by John <span aria-hidden="true">✦</span></footer>
+
+
+<!-- ─────────────────────────  the letter popup  ───────────────────────── -->
+<div class="reader" id="reader" role="dialog" aria-modal="true" aria-label="John's letter to Ares" hidden>
+  <div class="reader__backdrop" data-close></div>
+
+  <div class="reader__card" role="document">
+    <button class="reader__close" type="button" data-close aria-label="Close the letter">×</button>
+    <div class="reader__scroll" id="readerScroll">
+      <img class="reader__img" id="letterImg" alt="A handwritten letter from John to Ares."
+           data-src="assets/letter.jpg" width="1600" height="1151" draggable="false">
+    </div>
+    <p class="reader__foot">
+      <button class="reader__zoom" type="button" id="zoomBtn" aria-pressed="false">zoom in to read</button>
+      <a class="reader__save" href="assets/letter.jpg" download="letter-from-john.jpg">save the letter</a>
+    </p>
+  </div>
+</div>
+
+<div class="confetti" id="confetti" aria-hidden="true"></div>
+
+<script src="script.js" defer></script>
+</body>
+</html>

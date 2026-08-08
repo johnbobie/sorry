@@ -1,0 +1,909 @@
+/* ============================================================
+   for Ares — a little story
+   Everything that moves, moves with transform/opacity only, so
+   the browser never has to re-layout while you scroll.
+   ============================================================ */
+
+/* Two handwriting faces, served from this folder so the page never waits on
+   a third party and looks the same on every machine. */
+@font-face{
+  font-family: "Gaegu";
+  src: url("assets/fonts/gaegu-700.woff2") format("woff2");
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face{
+  font-family: "Patrick Hand";
+  src: url("assets/fonts/patrick-hand-400.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+
+:root{
+  --paper:      #fbfaf4;
+  --ink:        #2e2a26;
+  --ink-soft:   #6d645c;
+
+  --mint:       #b9e4d0;
+  --mint-line:  #6fc09a;
+  --sky:        #bfdcf3;
+  --sky-line:   #7db3da;
+  --lemon:      #fdf0b4;
+  --lemon-line: #e3c552;
+  --peach:      #ffd6bf;
+  --peach-line: #e39f78;
+  --lilac:      #e0d3f5;
+  --lilac-line: #a88fd4;
+  --pink:       #ffc9d8;
+  --pink-line:  #e0819a;
+
+  --hand: "Patrick Hand", "Comic Sans MS", "Chalkboard SE", "Bradley Hand",
+          "Segoe Print", "Marker Felt", cursive;
+  /* the wobblier one, saved for the big childish headings */
+  --hand-big: "Gaegu", "Patrick Hand", "Comic Sans MS", "Chalkboard SE",
+              "Bradley Hand", "Segoe Print", cursive;
+
+  /* how far each figure stands from the middle of the stage */
+  --spread: clamp(84px, 21vw, 235px);
+  /* far enough that John is completely gone */
+  --off: calc(-62vw - 200px);
+  --fig-h: clamp(190px, 43svh, 430px);
+
+  /* the wobbly "drawn by hand" outline, used all over */
+  --wobble: 255px 18px 235px 20px / 20px 235px 22px 255px;
+  /* a gentler version, for the little chips where the big radii flatten out */
+  --wobble-sm: 16px 7px 14px 9px / 9px 14px 7px 16px;
+}
+
+*, *::before, *::after{ box-sizing: border-box; }
+
+html{ -webkit-text-size-adjust: 100%; }
+
+body{
+  margin: 0;
+  font-family: var(--hand);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: url("assets/paper-tile.png");
+  background-repeat: repeat;
+  background-size: 117px 117px;   /* the tile is 2 grid cells at 2x for crispness */
+  overflow-x: hidden;
+}
+
+body.is-locked{ overflow: hidden; }
+
+img{ max-width: 100%; height: auto; }
+
+em{ font-style: normal; }
+
+
+/* ── shared doodle bits ─────────────────────────────────── */
+
+.doodle{
+  position: absolute;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.mini-star{ width: .9em; height: .9em; vertical-align: -.1em; }
+
+
+/* ============================================================
+   1. the front page
+   ============================================================ */
+
+.hero{
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12vh 6vw 18vh;
+  overflow: hidden;
+}
+
+.hero__inner{ position: relative; z-index: 2; }
+
+.hero__kicker{
+  margin: 0 0 .3em;
+  font-size: clamp(1.05rem, 3.6vw, 1.5rem);
+  color: var(--ink-soft);
+  letter-spacing: .04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5em;
+}
+
+.hero__title{
+  margin: 0;
+  font-family: var(--hand-big);
+  font-size: clamp(3.4rem, 17vw, 8rem);
+  line-height: 1.05;
+  font-weight: 700;
+}
+
+.hero__title em{
+  display: inline-block;
+  position: relative;
+  color: #d4738f;
+  padding: 0 .1em .12em;
+  animation: title-tilt 5s ease-in-out infinite;
+}
+
+/* crayon squiggle scribbled under the name */
+.hero__title em::after{
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -.02em;
+  height: .17em;
+  background: no-repeat center/100% 100% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 16' preserveAspectRatio='none'%3E%3Cpath d='M5 10c34-7 64 4 96-2 26-5 58 5 94-1' fill='none' stroke='%23ffb8cd' stroke-width='9' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.hero__by{
+  margin: 1.1em 0 0;
+  font-size: clamp(1rem, 3.6vw, 1.35rem);
+  color: var(--ink-soft);
+}
+
+.hero__heart{
+  display: inline-block;
+  color: #e0819a;
+  animation: heartbeat 1.8s ease-in-out infinite;
+}
+
+.doodle--sun{ width: clamp(70px, 16vw, 130px); top: 7vh; right: 8vw; animation: spin-slow 26s linear infinite; }
+.doodle--cloud1{ width: clamp(90px, 24vw, 190px); top: 15vh; left: 6vw; animation: drift 13s ease-in-out infinite; }
+.doodle--cloud2{ width: clamp(70px, 18vw, 140px); bottom: 24vh; right: 12vw; animation: drift 17s ease-in-out infinite reverse; }
+
+/* scroll down instruction */
+.scroll-cue{
+  position: absolute;
+  left: 50%;
+  bottom: max(4vh, 22px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35em;
+  z-index: 2;
+  animation: cue-bounce 1.9s ease-in-out infinite;
+}
+
+.scroll-cue__text{
+  font-size: clamp(1rem, 4vw, 1.3rem);
+  color: var(--mint-line);
+  background: #fff;
+  border: 3px solid var(--mint);
+  border-radius: var(--wobble-sm);
+  padding: .3em .9em .35em;
+}
+
+.scroll-cue__arrow{ width: clamp(26px, 7vw, 38px); height: auto; }
+
+/* once you start scrolling it politely gets out of the way */
+.hero.is-scrolled .scroll-cue{ opacity: 0; transition: opacity .4s ease; }
+
+
+/* ============================================================
+   2. the story
+   ============================================================ */
+
+#story{
+  position: relative;
+  height: 800vh;
+  height: 800svh;
+}
+
+.beats{
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 700vh;
+  height: 700svh;
+}
+
+.beat{ height: 100vh; height: 100svh; }
+
+.stage{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.doodle--stage-cloud{ width: clamp(80px, 20vw, 165px); top: 6svh; left: 5vw; animation: drift 15s ease-in-out infinite; }
+.doodle--stage-sun{ width: clamp(56px, 12vw, 100px); top: 5svh; right: 6vw; animation: spin-slow 30s linear infinite; }
+.doodle--birds{ width: clamp(70px, 15vw, 130px); top: 26svh; left: 11vw; animation: drift 19s ease-in-out infinite; }
+.doodle--flowers{ width: clamp(90px, 20vw, 160px); bottom: calc(18% - 24px); right: 5vw; }
+
+/* on narrow screens the extra doodles crowd the figures, so they sit out */
+@media (max-width: 620px){
+  .doodle--birds,
+  .doodle--flowers{ display: none; }
+}
+
+
+/* ── narration ─────────────────────────────────────────── */
+
+.captions{
+  position: absolute;
+  top: clamp(14px, 9svh, 90px);
+  left: 0; right: 0;
+  padding: 0 6vw;
+  text-align: center;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.cap{
+  position: absolute;
+  left: 0; right: 0;
+  top: 0;
+  margin: 0;
+  padding: 0 6vw;
+  font-family: var(--hand-big);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 6.2vw, 2.9rem);
+  line-height: 1.3;
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+  transition: opacity .45s ease, transform .45s ease;
+}
+
+.cap.is-on{ opacity: 1; transform: none; }
+
+.cap em{ color: #d4738f; }
+
+.cap small{
+  display: inline-block;
+  margin-top: .3em;
+  font-family: var(--hand);
+  font-weight: 400;
+  font-size: .55em;
+  color: var(--ink-soft);
+}
+
+
+/* ── the pastel blob behind whoever is introduced ──────── */
+
+.spotlight{
+  position: absolute;
+  left: 50%;
+  bottom: 13%;
+  width: min(44vw, 320px);
+  height: calc(var(--fig-h) + 6svh);
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(253,238,168,.85), rgba(253,238,168,0) 78%);
+  opacity: 0;
+  z-index: 1;
+  transform: translate3d(-50%, 0, 0);
+  transition: transform .85s cubic-bezier(.34,1.2,.5,1), opacity .5s ease;
+  pointer-events: none;
+}
+
+.stage[data-beat="1"] .spotlight{ opacity: 1; }
+.stage[data-beat="2"] .spotlight{
+  opacity: 1;
+  transform: translate3d(calc(-50% + var(--spread)), 0, 0);
+  background: radial-gradient(closest-side, rgba(186,217,243,.9), rgba(186,217,243,0) 78%);
+}
+
+
+/* ── the two figures ───────────────────────────────────── */
+
+.actor{
+  position: absolute;
+  left: 50%;
+  bottom: 19%;
+  z-index: 3;
+  opacity: 0;
+  will-change: transform;
+  transform: translate3d(-50%, 0, 0) scale(.55);
+  transition: transform .9s cubic-bezier(.34,1.25,.5,1), opacity .45s ease;
+}
+
+.actor__inner{ animation: bob 3.4s ease-in-out infinite; }
+
+.actor img{
+  display: block;
+  height: var(--fig-h);
+  width: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* John --------------------------------------------------- */
+.stage[data-beat="1"] #john{ opacity: 1; transform: translate3d(-50%, 0, 0) scale(1); }
+
+.stage[data-beat="2"] #john,
+.stage[data-beat="3"] #john,
+.stage[data-beat="6"] #john,
+.stage[data-beat="7"] #john{
+  opacity: 1;
+  transform: translate3d(calc(-50% - var(--spread)), 0, 0) scale(1);
+}
+
+/* he walks all the way out of frame — he doesn't fade, he leaves */
+.stage[data-beat="4"] #john,
+.stage[data-beat="5"] #john{
+  opacity: 1;
+  transform: translate3d(calc(-50% + var(--off)), 0, 0) scale(1);
+}
+
+/* leaving and coming back take longer, and he waddles while he does it */
+.stage[data-beat="4"] #john{ transition: transform 1.9s cubic-bezier(.5,.02,.5,1), opacity .4s ease; }
+.stage[data-beat="6"] #john{ transition: transform 1.9s cubic-bezier(.34,.06,.3,1), opacity .4s ease; }
+
+.stage[data-beat="4"] #john .actor__inner,
+.stage[data-beat="6"] #john .actor__inner{ animation: walk .42s ease-in-out infinite; }
+
+/* Ares --------------------------------------------------- */
+#ares{ transform: translate3d(calc(-50% + var(--spread)), 0, 0) scale(.55); }
+#ares .actor__inner{ animation-delay: -1.5s; }
+
+.stage[data-beat="2"] #ares,
+.stage[data-beat="3"] #ares,
+.stage[data-beat="4"] #ares,
+.stage[data-beat="6"] #ares,
+.stage[data-beat="7"] #ares{
+  opacity: 1;
+  transform: translate3d(calc(-50% + var(--spread)), 0, 0) scale(1);
+}
+
+/* left on his own, he drifts to the middle of the empty stage */
+.stage[data-beat="5"] #ares{
+  opacity: 1;
+  transform: translate3d(-50%, 0, 0) scale(1);
+}
+
+
+/* ── speech bubbles ────────────────────────────────────── */
+
+.bubble{
+  --b-fill: #ffffff;
+  --b-line: var(--sky-line);
+  position: absolute;
+  left: 50%;
+  z-index: 5;
+  background: var(--b-fill);
+  border: 3.5px solid var(--b-line);
+  border-radius: var(--wobble);
+  padding: .6em .95em .7em;
+  font-size: clamp(1rem, 3.9vw, 1.45rem);
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .4s ease, transform .55s cubic-bezier(.34,1.4,.5,1);
+}
+
+/* outlined little tail, drawn as two stacked triangles */
+.bubble::before,
+.bubble::after{
+  content: "";
+  position: absolute;
+  clip-path: polygon(0 0, 100% 0, 34% 100%);
+}
+.bubble::before{ bottom: -17px; width: 28px; height: 21px; background: var(--b-line); }
+.bubble::after { bottom: -11px; width: 22px; height: 15px; background: var(--b-fill); }
+
+/* sits clear above John's drawn name label, off to his right */
+.bubble--john,
+.bubble--back{
+  --b-fill: #fffdf3;
+  --b-line: var(--lemon-line);
+  bottom: 66%;
+  max-width: min(38vw, 260px);
+  transform: translate3d(calc(-1 * var(--spread) + 7vw), 12px, 0) scale(.85);
+}
+.bubble--john::before, .bubble--back::before{ left: 22px; }
+.bubble--john::after,  .bubble--back::after { left: 25px; }
+
+.bubble--john.is-on,
+.bubble--back.is-on{
+  opacity: 1;
+  transform: translate3d(calc(-1 * var(--spread) + 7vw), 0, 0) scale(1);
+}
+
+.bubble--trail{
+  --b-line: var(--ink-soft);
+  left: 7vw;
+  bottom: 50%;
+  letter-spacing: .1em;
+  transform: translate3d(0, 10px, 0) scale(.85);
+}
+.bubble--trail::before{ left: 18px; }
+.bubble--trail::after { left: 21px; }
+.bubble--trail.is-on{ opacity: 1; transform: none; }
+
+/* the apology itself, called in from off-stage */
+.bubble--offscreen{
+  --b-fill: #fff6f9;
+  --b-line: var(--pink-line);
+  left: 7vw;
+  bottom: 42%;
+  max-width: min(64vw, 400px);
+  transform: translate3d(-24px, 10px, 0) scale(.88);
+}
+.bubble--offscreen::before{ left: 20px; }
+.bubble--offscreen::after { left: 23px; }
+.bubble--offscreen.is-on{ opacity: 1; transform: none; }
+
+.bubble--offscreen em{ color: #d4738f; }
+
+.bubble--offscreen span{
+  display: block;
+  margin-top: .35em;
+  font-size: .82em;
+  color: var(--ink-soft);
+}
+
+
+/* ── hearts on the last beat ───────────────────────────── */
+
+.stage-hearts{
+  position: absolute;
+  left: 50%;
+  bottom: 34%;
+  z-index: 2;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity .5s ease;
+  pointer-events: none;
+}
+
+.stage-hearts span{
+  position: absolute;
+  font-size: clamp(1.9rem, 6vw, 2.8rem);
+  color: #e2718f;
+}
+.stage-hearts span:nth-child(1){ left: -16px; }
+.stage-hearts span:nth-child(2){ left: 34px;  font-size: .72em; }
+.stage-hearts span:nth-child(3){ left: -62px; font-size: .58em; }
+
+.stage[data-beat="7"] .stage-hearts{ opacity: 1; }
+.stage[data-beat="7"] .stage-hearts span{ animation: float-up 3.4s ease-in-out infinite; }
+.stage[data-beat="7"] .stage-hearts span:nth-child(2){ animation-delay: .8s; }
+.stage[data-beat="7"] .stage-hearts span:nth-child(3){ animation-delay: 1.7s; }
+
+
+/* ── the ground ────────────────────────────────────────── */
+
+.ground{
+  position: absolute;
+  left: -2%;
+  width: 104%;
+  height: 60px;
+  bottom: calc(18% - 30px);
+  z-index: 2;
+}
+
+.grass{
+  position: absolute;
+  left: -2%;
+  width: 104%;
+  height: 40px;
+  bottom: calc(18% - 8px);
+  z-index: 2;
+}
+
+
+/* ============================================================
+   3. the letter
+   ============================================================ */
+
+.finale{
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .6em;
+  text-align: center;
+  padding: 12vh 6vw;
+}
+
+.finale__title{
+  margin: 0;
+  font-family: var(--hand-big);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 7.2vw, 3.2rem);
+}
+
+.finale__sub{
+  margin: 0;
+  font-size: clamp(1rem, 3.8vw, 1.3rem);
+  color: var(--ink-soft);
+}
+
+/* the envelope ------------------------------------------- */
+
+.envelope{
+  appearance: none;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .9em;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.envelope__stage{
+  position: relative;
+  display: block;
+  width: min(74vw, 330px);
+  aspect-ratio: 320 / 210;
+  perspective: 900px;
+  /* headroom so the flap and the rising letter never reach the heading */
+  margin-top: clamp(70px, 15vh, 150px);
+  animation: envelope-idle 4.5s ease-in-out infinite;
+}
+
+.envelope:hover .envelope__stage,
+.envelope:focus-visible .envelope__stage{ animation-play-state: paused; transform: scale(1.04); transition: transform .3s ease; }
+
+.envelope__body{ position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; }
+
+.envelope__flap{
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  z-index: 3;
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform .8s cubic-bezier(.5,-0.2,.35,1.2);
+}
+.envelope__flap svg{ display: block; width: 100%; height: auto; }
+
+.envelope__seal{
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  width: 21%;
+  z-index: 4;
+  transform: translate(-50%, -50%);
+  transition: transform .45s ease, opacity .35s ease;
+}
+.envelope__seal svg{ display: block; width: 100%; height: auto; }
+
+/* the folded letter hiding inside */
+.envelope__letter{
+  position: absolute;
+  left: 8%;
+  bottom: 6%;
+  width: 84%;
+  height: 76%;
+  z-index: 1;
+  border-radius: 6px 8px 5px 7px;
+  background: #fffdf7;
+  border: 3px solid #ddd6c6;
+  transform: translate3d(0, 0, 0);
+  transition: transform .95s cubic-bezier(.3,.9,.3,1.1);
+}
+
+/* faint handwriting lines so it reads as a letter even folded */
+.envelope__letter-lines{
+  position: absolute;
+  inset: 16% 12%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #cfc7b6 0, #cfc7b6 2px,
+    transparent 2px, transparent 15px
+  );
+  opacity: .75;
+}
+
+.envelope.is-open .envelope__flap{ transform: rotateX(-168deg); z-index: 0; }
+.envelope.is-open .envelope__seal{ opacity: 0; transform: translate(-50%, -50%) scale(.4) rotate(-40deg); }
+.envelope.is-open .envelope__letter{ transform: translate3d(0, -52%, 0) rotate(-2deg); }
+
+.envelope__label{
+  font-family: var(--hand-big);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 5.2vw, 2rem);
+  color: #d4738f;
+}
+
+.envelope__hint{
+  font-size: clamp(.95rem, 3.4vw, 1.15rem);
+  color: var(--ink-soft);
+  background: #fff;
+  border: 3px solid var(--mint);
+  border-radius: var(--wobble-sm);
+  padding: .25em .85em .3em;
+  animation: cue-bounce 2.2s ease-in-out infinite;
+  transition: opacity .3s ease;
+}
+
+.envelope.is-open .envelope__hint{ opacity: 0; }
+
+.finale__end{
+  margin: 2.4em 0 0;
+  font-size: clamp(1rem, 3.8vw, 1.25rem);
+  color: var(--ink-soft);
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.finale__end.is-on{ opacity: 1; transform: none; }
+.finale__end span{ color: #e0819a; }
+
+.foot{
+  padding: 3.5em 6vw 4em;
+  text-align: center;
+  font-size: .95rem;
+  color: #9d948a;
+}
+
+
+/* ============================================================
+   the letter popup
+   ============================================================ */
+
+.reader{
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(3vh, 14px) max(3vw, 12px);
+}
+
+.reader[hidden]{ display: none; }
+
+.reader__backdrop{
+  position: absolute;
+  inset: 0;
+  background: rgba(46, 42, 38, .58);
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+
+.reader__card{
+  position: relative;
+  width: min(96vw, 940px);
+  max-height: 94svh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  background-image: url("assets/paper-tile.png");
+  background-size: 117px 117px;
+  border: 4px solid var(--peach-line);
+  border-radius: 22px 10px 20px 12px;
+  padding: clamp(10px, 2.4vw, 20px);
+  box-shadow: 0 18px 50px rgba(46, 42, 38, .3);
+  opacity: 0;
+  transform: translate3d(0, 26px, 0) scale(.86) rotate(-1.5deg);
+  transition: opacity .45s ease, transform .55s cubic-bezier(.3,1.35,.45,1);
+}
+
+.reader.is-on .reader__backdrop{ opacity: 1; }
+.reader.is-on .reader__card{ opacity: 1; transform: none; }
+
+.reader__close{
+  position: absolute;
+  top: -16px; right: -12px;
+  width: 44px; height: 44px;
+  display: grid;
+  place-items: center;
+  font: inherit;
+  font-size: 1.7rem;
+  line-height: 1;
+  color: var(--ink);
+  background: #fff;
+  border: 3.5px solid var(--pink-line);
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 2;
+  -webkit-tap-highlight-color: transparent;
+}
+.reader__close:hover{ background: var(--pink); }
+
+.reader__scroll{
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 10px;
+  min-height: 0;          /* lets the flex child actually shrink and scroll */
+}
+
+/* blown up, the letter gets a tall window to be panned around in */
+.reader.has-zoom .reader__scroll{ height: 72svh; }
+
+.reader__img{
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+
+/* On a phone the whole letter shrinks below reading size, so it can be
+   blown up to a comfortable width and panned around inside the frame. */
+.reader__img.is-zoomed{
+  width: min(1400px, 250vw);
+  max-width: none;
+  cursor: zoom-out;
+}
+
+.reader__foot{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: .4em 1.4em;
+  margin: .85em 0 .15em;
+  font-size: 1rem;
+}
+
+.reader__save,
+.reader__zoom{
+  font: inherit;
+  color: var(--ink-soft);
+  background: none;
+  border: 0;
+  border-bottom: 3px solid var(--mint);
+  border-radius: 0;
+  padding: 0 0 1px;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.reader__save:hover,
+.reader__zoom:hover{ color: var(--ink); border-bottom-color: var(--mint-line); }
+.reader__zoom[aria-pressed="true"]{ border-bottom-color: var(--pink-line); }
+
+
+/* ── confetti burst ────────────────────────────────────── */
+
+.confetti{
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti span{
+  position: absolute;
+  top: -8vh;
+  font-size: 1.4rem;
+  will-change: transform;
+  animation: fall linear forwards;
+}
+
+
+/* ============================================================
+   keyframes — all transform/opacity, nothing that reflows
+   ============================================================ */
+
+@keyframes bob{
+  0%, 100%{ transform: translate3d(0, 0, 0) rotate(0deg); }
+  50%     { transform: translate3d(0, -1.1%, 0) rotate(.7deg); }
+}
+
+@keyframes walk{
+  0%, 100%{ transform: translate3d(0, 0, 0) rotate(-3.2deg); }
+  50%     { transform: translate3d(0, -2.4%, 0) rotate(3.2deg); }
+}
+
+@keyframes cue-bounce{
+  0%, 100%{ transform: translateX(-50%) translateY(0); }
+  50%     { transform: translateX(-50%) translateY(10px); }
+}
+
+.envelope__hint{ animation-name: hint-bounce; }
+@keyframes hint-bounce{
+  0%, 100%{ transform: translateY(0); }
+  50%     { transform: translateY(6px); }
+}
+
+@keyframes heartbeat{
+  0%, 100%{ transform: scale(1); }
+  30%     { transform: scale(1.25); }
+  60%     { transform: scale(1.05); }
+}
+
+@keyframes title-tilt{
+  0%, 100%{ transform: rotate(-2deg); }
+  50%     { transform: rotate(2deg); }
+}
+
+@keyframes spin-slow{
+  from{ transform: rotate(0deg); }
+  to  { transform: rotate(360deg); }
+}
+
+@keyframes drift{
+  0%, 100%{ transform: translate3d(0, 0, 0); }
+  50%     { transform: translate3d(14px, -10px, 0); }
+}
+
+@keyframes float-up{
+  0%  { transform: translate3d(0, 0, 0) scale(.6); opacity: 0; }
+  15% { opacity: 1; }
+  78% { opacity: 1; }
+  100%{ transform: translate3d(8px, -130px, 0) scale(1.15); opacity: 0; }
+}
+
+@keyframes envelope-idle{
+  0%, 100%{ transform: rotate(-1.4deg) translateY(0); }
+  50%     { transform: rotate(1.4deg) translateY(-8px); }
+}
+
+@keyframes fall{
+  from{ transform: translate3d(0, 0, 0) rotate(0deg); opacity: 1; }
+  to  { transform: translate3d(var(--dx, 0px), 112vh, 0) rotate(var(--dr, 360deg)); opacity: 0; }
+}
+
+
+/* ============================================================
+   quieter version for anyone who asked for less motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .12s !important;
+  }
+  .stage[data-beat="4"] #john,
+  .stage[data-beat="5"] #john{ opacity: 0; }
+  .confetti{ display: none; }
+}
+
+
+/* ── phones: smaller figures, further apart, and John's voice
+      moves above Ares so it never covers his face ──────────── */
+
+@media (max-width: 620px){
+  :root{
+    --fig-h: clamp(170px, 34svh, 300px);
+    --spread: clamp(92px, 26vw, 140px);
+  }
+
+  .bubble--offscreen{
+    left: 5vw;
+    bottom: 56%;
+    max-width: min(78vw, 300px);
+  }
+
+  .bubble--john,
+  .bubble--back{
+    bottom: 70%;
+    max-width: min(52vw, 210px);
+    transform: translate3d(calc(-1 * var(--spread) + 3vw), 12px, 0) scale(.85);
+  }
+  .bubble--john.is-on,
+  .bubble--back.is-on{ transform: translate3d(calc(-1 * var(--spread) + 3vw), 0, 0) scale(1); }
+
+  .bubble--trail{ bottom: 44%; }
+}
+
+
+/* ── short screens: give the words a bit more room ──────── */
+
+@media (max-height: 620px){
+  :root{ --fig-h: clamp(150px, 38svh, 300px); }
+  .cap{ font-size: clamp(1.1rem, 4.4vw, 1.6rem); }
+  .captions{ top: 8px; }
+}
+
+/* ── wide screens: keep the pair from drifting too far apart ── */
+
+@media (min-width: 1100px){
+  .bubble--john,
+  .bubble--back{ transform: translate3d(calc(-1 * var(--spread) + 78px), 12px, 0) scale(.85); }
+  .bubble--john.is-on,
+  .bubble--back.is-on{ transform: translate3d(calc(-1 * var(--spread) + 78px), 0, 0) scale(1); }
+  .bubble--offscreen{ left: 12vw; }
+}
